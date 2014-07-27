@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+ "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Let's play blackjack</title>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td id="Dealer">Dealer cards: </td>
+        <td id="dealer_cards"></td>
+      </tr>
+      <tr>
+         <td id="dealer_total"></td>
+      </tr>
+    </table>
+    <table>
+      <tr id="player_1">
+        <td id="player_name_1">Player 1</td>
+        <td id="bet_1">Bet: </td>
+      </tr>
+      <tr>
+        <td>Cards: </td>
+        <td id="cards_1"></td>
+      </tr>
+      <tr>
+        <td>Total: </td>
+        <td id="total_1"></td>
+      </tr>
+      <tr id="bank">
+        <td id="money">Money: </td>
+      </tr>
+    </table>
+    <button id="play" onClick="play()">Deal</button>
+    <button id="hit" onClick="playerHit()" hidden="hidden">Hit</button>
+    <button id="stay" onClick="dealerPlay()" hidden="hidden">Stay</button>
+    <button id="double" onClick="playerDouble()" hidden="hidden">Double</button>
+    <button id="insurance_yes" onClick="insuranceTaken()" hidden="hidden">Yes for insurance</button>
+    <button id="insurance_no" onClick="insuranceNotTaken()" hidden="hidden">No for insurance</button>
+    <h3 id="message"></h3>
+  </body>
+  
+  <script src="blackjack.js"></script>
+  
+</html>
