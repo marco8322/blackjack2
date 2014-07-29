@@ -257,10 +257,6 @@ function shuffleCards() {
         shuffledCards[i] = shuffledCards[newIdx];
         shuffledCards[newIdx] = tmp;
     }
-    
-    // test
-    //
-    shuffledCards[1] = 'A';
 }
 
 /* Get the value of a card */
