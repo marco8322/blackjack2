@@ -2,7 +2,7 @@
 /* This is the main entry for the function */
 
 
-function createBlackjackGame(cardsCreater, buttons) {
+function createBlackjackGame(cardsCreater, buttons, playerBoard) {
     
     /* Cards */
     var shuffledCards;
@@ -13,9 +13,11 @@ function createBlackjackGame(cardsCreater, buttons) {
     /* Player cards */
     var playerCards;
 
-    return {
+    var blackjackObj = {
         deal : function () {
                 
+            playerBoard.clearTable();    
+            
             // Shuffle the cards
             //
             console.log("Shuffling cards");
@@ -25,12 +27,15 @@ function createBlackjackGame(cardsCreater, buttons) {
             // Get the cards for the dealer and player
             //
             console.log("Create player and dealer");
+            var handBoard = playerBoard.addHand();
+            console.log("Merde");
             playerCards = createPlayerHand(
-                createBoard(
+                /*createBoard(
                     document.getElementById("cards_1"),
                     document.getElementById("total_1"),
                     document.getElementById("bet_1")
-                ),
+                ),*/
+                handBoard,
                 playerInfo
             );
         
@@ -49,10 +54,12 @@ function createBlackjackGame(cardsCreater, buttons) {
             shuffledCards.addCard(playerCards); 
             shuffledCards.addCard(dealerCards);
             
+            console.log("Go to play");
             this.play();
         },
         
         play : function () {
+            console.log("In play");
             playerCards.showCards();
             dealerCards.showCards();
     
@@ -63,6 +70,7 @@ function createBlackjackGame(cardsCreater, buttons) {
         
         /* initial move... ask for insurance if required */
         initialMove : function () {
+            console.log("initialMove");
             if( dealerCards.cards[0] == 'A' )
             {
                 buttons.enableInsurance();
@@ -133,6 +141,8 @@ function createBlackjackGame(cardsCreater, buttons) {
             if( playerCards.total == 21 ) {
                 this.dealerPlay();
             }
+            
+            this.askNextMove();
         },
         
         
@@ -223,6 +233,16 @@ function createBlackjackGame(cardsCreater, buttons) {
             buttons.enableDeal();
         },
     };
+    
+    /* Set up the callbacks for the buttons */
+    buttons.setCallbackDeal(function () { blackjackObj.deal(); });
+    buttons.setCallbackHit(function () { blackjackObj.playerHit(); });
+    buttons.setCallbackStay(function() { blackjackObj.dealerPlay(); });
+    buttons.setCallbackDouble(function () { blackjackObj.playerDouble(); });
+    buttons.setCallbackInsuranceYes(function () { blackjackObj.insuranceTaken(); });
+    buttons.setCallbackInsuranceNo(function () { blackjackObj.insuranceNotTaken(); });
+    
+    return blackjackObj;
 }
         
 
@@ -418,4 +438,3 @@ var playerInfo = createAPlayer(
     );
 
 
-var theGame = createBlackjackGame(createShuffleCards, createButtons());

@@ -9,8 +9,8 @@ function createButtons() {
     var insuranceYesButton = document.getElementById("insurance_yes");   
     var insuranceNoButton = document.getElementById("insurance_no");
     
-    var enableButton = function(b) { b.hidden = ""; }
-    var disableButton = function(b) { b.hidden = "hidden"; }
+    var enableButton = function(b) { b.hidden = ""; };
+    var disableButton = function(b) { b.hidden = "hidden"; };
     
     return {
         disableAll : function() {
@@ -41,6 +41,13 @@ function createButtons() {
             this.disableAll();
             enableButton(insuranceYesButton);
             enableButton(insuranceNoButton);
-        }
-    }
+        },
+        
+        setCallbackDeal : function(cb) { dealButton.onclick = cb; },
+        setCallbackHit : function(cb) { hitButton .onclick= cb; },
+        setCallbackStay : function(cb) { stayButton.onclick = cb; },
+        setCallbackDouble : function(cb) { doubleButton.onclick = cb; },
+        setCallbackInsuranceYes : function(cb) { insuranceYesButton.onclick = cb; },
+        setCallbackInsuranceNo : function(cb) { insuranceNoButton.onclick = cb; }
+    };
 }

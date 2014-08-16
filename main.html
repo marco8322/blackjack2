@@ -14,35 +14,27 @@
          <td id="dealer_total"></td>
       </tr>
     </table>
+    <table id="playerBoard">
+    </table>
     <table>
-      <tr id="player_1">
-        <td id="player_name_1">Player 1</td>
-        <td id="bet_1">Bet: </td>
-      </tr>
-      <tr>
-        <td>Cards: </td>
-        <td id="cards_1"></td>
-      </tr>
-      <tr>
-        <td>Total: </td>
-        <td id="total_1"></td>
-      </tr>
       <tr id="bank">
         <td id="money">Money: </td>
       </tr>
     </table>
-    <button id="play" onClick="theGame.deal()">Deal</button>
-    <button id="hit" onClick="theGame.playerHit()" hidden="hidden">Hit</button>
-    <button id="stay" onClick="theGame.dealerPlay()" hidden="hidden">Stay</button>
-    <button id="double" onClick="theGame.playerDouble()" hidden="hidden">Double</button>
-    <button id="insurance_yes" onClick="theGame.insuranceTaken()" hidden="hidden">Yes for insurance</button>
-    <button id="insurance_no" onClick="theGame.insuranceNotTaken()" hidden="hidden">No for insurance</button>
+    <button id="play">Deal</button>
+    <button id="hit" hidden="hidden">Hit</button>
+    <button id="stay" hidden="hidden">Stay</button>
+    <button id="double" hidden="hidden">Double</button>
+    <button id="insurance_yes" hidden="hidden">Yes for insurance</button>
+    <button id="insurance_no" hidden="hidden">No for insurance</button>
     <h3 id="message"></h3>
   </body>
   
   <script type="text/javascript" src="buttons.js"></script>
   <script type="text/javascript" src="cards.js"></script>
+  <script type="text/javascript" src="playerBoard.js"></script>
   <script type="text/javascript" src="blackjack.js"></script>
+  <script type="text/javascript" src="main.js"></script>
   
   
 </html>
