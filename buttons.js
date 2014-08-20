@@ -2,7 +2,9 @@
 /* File for handling of buttons */
 
 function createButtons() {
-    var dealButton = document.getElementById("play");
+    var newHandButton = document.getElementById("newHand");
+    var betButton = document.getElementById("bet");
+    var dealButton = document.getElementById("deal");
     var hitButton = document.getElementById("hit");
     var stayButton = document.getElementById("stay");
     var doubleButton = document.getElementById("double");
@@ -14,6 +16,8 @@ function createButtons() {
     
     return {
         disableAll : function() {
+            disableButton(newHandButton);
+            disableButton(betButton);
             disableButton(dealButton);
             disableButton(hitButton);
             disableButton(stayButton);
@@ -22,8 +26,18 @@ function createButtons() {
             disableButton(insuranceNoButton);
         },
         
-        enableDeal : function() {
+        enableNewHand : function() {
             this.disableAll();
+            enableButton(newHandButton);
+        },
+        
+        enableBet : function () {
+            this.disableAll();
+            enableButton(betButton);
+        },
+        
+        enableDeal : function() {
+            //this.disableAll();
             enableButton(dealButton);
         },
         
@@ -43,6 +57,8 @@ function createButtons() {
             enableButton(insuranceNoButton);
         },
         
+        setCallbackNewHand : function(cb) { newHandButton.onclick = cb; },
+        setCallbackBet : function(cb) { betButton.onclick = cb; },
         setCallbackDeal : function(cb) { dealButton.onclick = cb; },
         setCallbackHit : function(cb) { hitButton .onclick= cb; },
         setCallbackStay : function(cb) { stayButton.onclick = cb; },

@@ -2,7 +2,13 @@
 /* This is the main entry for the function */
 
 
-function createBlackjackGame(cardsCreater, buttons, playerBoard) {
+function createBlackjackGame(
+    cardsCreater, 
+    buttons, 
+    playerBoard,
+    messageBoard
+    ) 
+{
     
     /* Cards */
     var shuffledCards;
@@ -12,41 +18,57 @@ function createBlackjackGame(cardsCreater, buttons, playerBoard) {
     
     /* Player cards */
     var playerCards;
+    
+    /* Initial bet */
+    var initialBet = 0;
 
     var blackjackObj = {
-        deal : function () {
-                
-            playerBoard.clearTable();    
+        
+        newHand : function() {
+            initialBet = 0;
+            messageBoard.setMessage("");
             
-            // Shuffle the cards
+            // Enable bet button
             //
-            console.log("Shuffling cards");
-            shuffledCards = cardsCreater(1);
-            document.getElementById("message").innerHTML = "";
-    
-            // Get the cards for the dealer and player
+            buttons.enableBet();
+            
+            // Create new hand
             //
+            this.initializeHands();
+        },
+        
+        initializeHands : function () {
+            playerBoard.clearTable();    
             console.log("Create player and dealer");
             var handBoard = playerBoard.addHand();
             console.log("Merde");
+
             playerCards = createPlayerHand(
-                /*createBoard(
-                    document.getElementById("cards_1"),
-                    document.getElementById("total_1"),
-                    document.getElementById("bet_1")
-                ),*/
                 handBoard,
                 playerInfo
             );
-        
+
             dealerCards = createDealerHand(
                 createBoard(
                     document.getElementById("dealer_cards"),
                     document.getElementById("dealer_total")
                 )
             );
-    
-            playerCards.initialBet(10);
+        },
+        
+        addBet : function(amount) {
+            initialBet += amount;
+            playerCards.increaseBet(amount);
+            
+            buttons.enableDeal();
+        },
+        
+        deal : function () {
+            // Shuffle the cards
+            //
+            console.log("Shuffling cards");
+            shuffledCards = cardsCreater(1);
+            document.getElementById("message").innerHTML = "";
     
             console.log("Add cards");
             shuffledCards.addCard(playerCards); 
@@ -71,23 +93,47 @@ function createBlackjackGame(cardsCreater, buttons, playerBoard) {
         /* initial move... ask for insurance if required */
         initialMove : function () {
             console.log("initialMove");
+ 
+            // Mark if players have blackjack
+            //
+            if( playerCards.total == 21 )
+            {
+                playerCards.setHasBlackjack();    
+            }
+            
+            // Mark if dealer has blackjack
+            //
+            if( dealerCards.total == 21 )
+            {
+                dealerCards.setHasBlackjack();
+            }
+            
+            // Play for insurance...
+            //
             if( dealerCards.cards[0] == 'A' )
             {
                 buttons.enableInsurance();
                 return;
             }
     
+    
+            // If dealer has blackjack, game is over
+            //
+            if( dealerCards.hasBlackjack() ) {
+                this.showHiddenCard();
+                this.gameOver();
+                return;
+            }
+            
             this.askNextMove();
         },
         
         /* This will enable the hit/stay buttons and disable the let's play button */
         askNextMove : function () {
-            // If 21, game over...
-            //
-    
-            if( dealerCards.total == 21 || playerCards.total == 21) {
-                this.showHiddenCard();
-                this.gameOver();
+
+            if( playerCards.total == 21 ) 
+            {
+                this.gotoNextPlayer();
                 return;
             }
     
@@ -100,19 +146,25 @@ function createBlackjackGame(cardsCreater, buttons, playerBoard) {
             }
         },
         
+        gotoNextPlayer : function() {
+            this.dealerPlay();    
+        },
+        
         /* If insurance is taken */
         insuranceTaken : function () {
             buttons.disableAll();
             
-            if(dealerCards.total == 21) {
+            if(dealerCards.hasBlackjack()) {
                 this.showHiddenCard();
                 playerCards.payInsurance();
-                document.getElementById("message").innerHTML = "Insurance won";
+                
+                messageBoard.setMessage("Insurance won");
                 buttons.enableDeal();
                 return;
             }
     
-            document.getElementById("message").innerHTML = "Insurance lost";
+            //document.getElementById("message").innerHTML = "Insurance lost";
+            messageBoard.setMessage("Insurance lost");
             playerCards.loseInsurnce();
             this.askNextMove();
         },
@@ -187,11 +239,11 @@ function createBlackjackGame(cardsCreater, buttons, playerBoard) {
     
             this.showHiddenCard();
     
-            if( dealerCards.total == 21 && dealerCards.cards.length == 2 ) {
+            if( dealerCards.hasBlackjack() ) {
                 msg += "Dealer has blackjack, ";
             }
     
-            if( playerCards.total == 21 && playerCards.cards.length == 2) {
+            if( playerCards.hasBlackjack() ) {
                 msg += "Player has blackjack, ";
                 playerHasBlackjack = true;
             }
@@ -215,7 +267,8 @@ function createBlackjackGame(cardsCreater, buttons, playerBoard) {
                 isPush = true;
             }
     
-            document.getElementById("message").innerHTML = msg;       
+            messageBoard.setMessage(msg);
+            //document.getElementById("message").innerHTML = msg;       
     
             if( playerWins ) {
                 if( playerHasBlackjack ) {
@@ -230,17 +283,21 @@ function createBlackjackGame(cardsCreater, buttons, playerBoard) {
                 playerCards.winBet(1);
             }
     
-            buttons.enableDeal();
+            buttons.enableNewHand();
         },
     };
     
     /* Set up the callbacks for the buttons */
+    buttons.setCallbackNewHand(function () { blackjackObj.newHand(); });
+    buttons.setCallbackBet(function () { blackjackObj.addBet(10); });
     buttons.setCallbackDeal(function () { blackjackObj.deal(); });
     buttons.setCallbackHit(function () { blackjackObj.playerHit(); });
     buttons.setCallbackStay(function() { blackjackObj.dealerPlay(); });
     buttons.setCallbackDouble(function () { blackjackObj.playerDouble(); });
     buttons.setCallbackInsuranceYes(function () { blackjackObj.insuranceTaken(); });
     buttons.setCallbackInsuranceNo(function () { blackjackObj.insuranceNotTaken(); });
+    
+    buttons.enableNewHand();
     
     return blackjackObj;
 }
@@ -298,6 +355,8 @@ function createBoard(cardsBoard, totalBoard, betBoard) {
 }
 
 function createAHand() {
+    var isBlackjack = false;
+    
     return {
         total : 0,
         cards : [],
@@ -321,7 +380,10 @@ function createAHand() {
                 this.soft = false;
                 this.total -= 10;
             }
-        }
+        },
+        
+        setHasBlackjack : function () { isBlackjack = true; },
+        hasBlackjack : function () { return isBlackjack; }
     };
 }
 

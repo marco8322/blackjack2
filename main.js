@@ -5,5 +5,10 @@
 var theGame = createBlackjackGame(
     createShuffleCards, 
     createButtons(), 
-    makePlayerBoard("playerBoard")
+    makePlayerBoard("playerBoard"),
+    {
+        setMessage: function(msg) {
+            document.getElementById("message").innerHTML = msg;
+        }
+    }
     );
